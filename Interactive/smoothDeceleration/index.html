@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>부드러운 감속 원리</title>
+    <style>
+        body {
+            height: 500vh;
+        }
+        .box {
+            position: fixed;
+            top: 100px;
+            left: 0;
+            width: 0;
+            height: 100px;
+            background: orange;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="box"></div>
+
+    <script>
+        const box = document.querySelector('.box');
+        let acc = 0.1;
+        let deleayedYOffset = 0;
+        let rafId;
+        let rafState;
+
+        window.addEventListener('scroll', () => {
+            // box.style.width = `${window.pageYOffset}px`;
+            
+            if (!rafState) {
+                rafId = requestAnimationFrame(loop);
+                rafId = true;
+            }
+        });
+
+        // loop 함수가 계속해서 실행 중
+        function loop() {
+            // 목표지점으로 이동할 때, 이동한 거리가 조금씩 줄어들게 한다.
+            // 현재위치 + (목표지점 - 현재지점) * 0.1
+            // (목표지점 - 현재지점) * 0.1 => (목표지점으로 이동 후) 남은 목표지점까지 1/10만큼 이동 + 현재위치 => 현재위치에서 1/10만큼 이동한다. 
+            // 목표지점이 가까워질수록 '현재위치 + (목표지점 - 현재지점) * 0.1' 수식의 값이 줄어든다.(목표지점의 거리가 짧아질수록 1/10만큼 전진)
+            // 즉, 기존에 움직인 거리보다 조금씩 움직인 거리가 줄어든다. => 처음엔 빠르다가 점점 감소한다.
+            deleayedYOffset = deleayedYOffset + (pageYOffset - deleayedYOffset) * acc;
+            // box.style.width = `${window.pageYOffset}px`; // 위와 동일하게 동작
+            box.style.width = `${deleayedYOffset}px`; // 부드럽게 움직인다.
+            // console.log('deleayedYOffset')
+
+            rafId = requestAnimationFrame(loop);
+
+            // loop 변화가 일어난 후 멈춰준다. => 목표지점과 현재지점의 차이가 없을 때 멈춰 준다.
+            // -값이 나올수도 있기 때문에, Math.abs()(절대값) 사용
+            if (Math.abs(pageYOffset - deleayedYOffset) < 1) {
+                cancelAnimationFrame(rafId);
+                rafState = false; // 다시 작동시키기 위해 변수 추가, 캔슬되었을때, false
+            }
+        }
+
+        loop();
+    </script>
+</body>
+</html>

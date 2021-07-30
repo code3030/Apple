@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>requestAnimationFrame</title>
+    <style>
+        .ilbuni {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .value {
+            text-align: center;
+        }
+    </style>
+</head>
+
+<body>
+    <img class="ilbuni" src="../assets/img/blend-image-1.jpg" width="150" alt="날아간다">
+    <div class="value">requestAnimationFrame</div>
+
+    <script>
+        const ilbuni = document.querySelector('.ilbuni');
+        const value = document.querySelector('.value');
+        let yPos = 0;
+        let rafId;
+
+        // 1
+        // console창에 1, 0 순으로 찍힌다. => requestAnimationFrame는 지연효과가 있다, 한번만 실행한다.
+        // requestAnimationFrame(() => {
+        //     console.log(0);
+        // })
+        // console.log(1);
+
+        // 2
+        // function render() {
+        //     value.innerHTML = yPos; // 0이 찍힌다.
+        //     yPos++;
+
+        //     // 반복 호출
+        //     // 초당 60번 목표(60프레임)
+        //     // 변화하는 포지션값을 ibuni의 y포지션값으로 설정하면 된다.
+        //     requestAnimationFrame(render); // 아주 빠르게 반복하여 1씩 증가한다.
+        // }
+        // render();
+
+        // 3
+        // function render() {
+        //     value.innerHTML = yPos;
+        //     ilbuni.style.transform = `translateY(${-yPos}px)`
+        //     yPos++;
+
+        //     rafId = requestAnimationFrame(render); // rafId에 넣어준다. 클릭 시 멈추게하기 위해
+        // }
+        // render();
+
+        // window.addEventListener('click', () => {
+        //     cancelAnimationFrame(rafId);
+        // });
+
+        // 4
+        function render() {
+            value.innerHTML = yPos;
+            ilbuni.style.transform = `translateY(${-yPos}px)`
+            yPos++;
+
+            rafId = requestAnimationFrame(render); // rafId에 넣어준다. 클릭 시 멈추게하기 위해
+
+            if (rafId > 500) {
+                cancelAnimationFrame(rafId);
+            }
+            
+        }
+        render();
+    </script>
+</body>
+</html>

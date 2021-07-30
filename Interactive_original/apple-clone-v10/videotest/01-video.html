@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Document</title>
+	<style>
+		* {
+			
+			margin: 0;
+			padding: 0;
+		}
+		body {
+			height: 500vh;
+		}
+		body.before-load {
+			overflow-y: hidden;
+		}
+		.sample-video {
+			position: fixed;
+			top: 0;
+			left: 0;
+			width: 100%;
+		}
+	</style>
+</head>
+<body class="before-load">
+	<video class="sample-video" src="../video/sample-low.mp4" muted></video>
+	<!-- <video class="sample-video" src="../video/sample-high.mp4" muted></video> -->
+
+	<script>
+		const videoElem = document.querySelector('.sample-video');
+		let videoDuration;
+
+		// loadeddata 로드를 한번만, 로드완료 후 작동
+		videoElem.addEventListener('loadeddata', function () {
+			console.log('비디오 로드 완료');
+			// duration 비디오 재생시간
+			videoDuration = videoElem.duration;
+			// console.log(videoDuration);
+			init();
+		})
+
+		let progress;
+		let currentFrame;
+		function init() {
+			document.body.classList.remove('before-load');
+
+			// scroll 이벤트 바인딩
+			window.addEventListener('scroll', function () {
+				// 현재 스크롤 비율
+				progress = pageYOffset / (document.body.offsetHeight - window.innerHeight);
+				console.log(progress);
+				// 안전장치 progress는 0~1 사이
+				if (progress < 0) progress = 0;
+				if (progress > 1) progress = 1;
+
+				// 현재 재생시간
+				videoElem.currentTime = videoElem.duration * progress;
+			});
+		}
+
+		window.addEventListener('load', init);
+	</script>
+</body>
+</html>
